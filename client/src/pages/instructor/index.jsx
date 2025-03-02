@@ -2,12 +2,14 @@ import InstructorCourses from "@/components/instructor-view/courses";
 import InstructorDashboard from "@/components/instructor-view/dashboard";
 import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
+import { AuthContext } from "@/context/auth-context";
 import { Tabs } from "@radix-ui/react-tabs";
 import { BarChart, Book, LogOut } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 function InstructorDashboardPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const{resetCredentials} = useContext(AuthContext)
   const menuItem = [
     {
       icon: BarChart,
@@ -29,7 +31,10 @@ function InstructorDashboardPage() {
     },
   ];
 
-  function handleLogout() {}
+  function handleLogout() {
+    resetCredentials();
+    sessionStorage.clear();
+  }
 
   return (
     <div className="flex h-full min-h-screen bg-gray-100">
@@ -41,6 +46,7 @@ function InstructorDashboardPage() {
               <Button
                 className="w-full justify-start mb-2"
                 key={menuItem.value}
+                variant = {activeTab === menuItem.value ? 'secondary' : 'ghost'}
                 onClick={
                   menuItem.value === "logout"
                     ? handleLogout

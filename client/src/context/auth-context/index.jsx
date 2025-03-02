@@ -43,8 +43,7 @@ export default function AuthProvider({ children }) {
 
   //check auth user
   async function checkAuthUser() {
-
-    try{
+    try {
       const data = await checkAuthService();
       if (data.success) {
         setAuth({
@@ -59,20 +58,23 @@ export default function AuthProvider({ children }) {
         });
         setLoading(false);
       }
-
-    }catch(error){
+    } catch (error) {
       console.log(error);
-      if(!error?.response?.data?.success){
+      if (!error?.response?.data?.success) {
         setAuth({
           authenticate: false,
           user: null,
         });
         setLoading(false);
       }
-      
     }
-    
+  }
 
+  function resetCredentials(){
+    setAuth({
+      authenticate: false,
+      user: null
+    })
   }
 
   useEffect(() => {
@@ -89,6 +91,7 @@ export default function AuthProvider({ children }) {
         handleRegisterUser,
         handleLoginUser,
         auth,
+        resetCredentials
       }}
     >
       {loading ? <Skeleton /> : children}
