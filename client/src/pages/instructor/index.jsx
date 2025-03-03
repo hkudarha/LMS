@@ -9,7 +9,7 @@ import { useContext, useState } from "react";
 
 function InstructorDashboardPage() {
   const [activeTab, setActiveTab] = useState("dashboard");
-  const{resetCredentials} = useContext(AuthContext)
+  const { resetCredentials } = useContext(AuthContext);
   const menuItem = [
     {
       icon: BarChart,
@@ -46,7 +46,7 @@ function InstructorDashboardPage() {
               <Button
                 className="w-full justify-start mb-2"
                 key={menuItem.value}
-                variant = {activeTab === menuItem.value ? 'secondary' : 'ghost'}
+                variant={activeTab === menuItem.value ? "secondary" : "ghost"}
                 onClick={
                   menuItem.value === "logout"
                     ? handleLogout
@@ -65,13 +65,11 @@ function InstructorDashboardPage() {
         <div className="max-w-7xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            {
-                menuItem.map(menuItem => <TabsContent value={menuItem.value}>
-                    {
-                        menuItem.Component !== null ? menuItem.Component : null
-                    }
-                </TabsContent>)
-            }
+            {menuItem.map((menuItem) => (
+              <TabsContent value={menuItem.value}>
+                {menuItem.Component !== null ? menuItem.Component : null}
+              </TabsContent>
+            ))}
           </Tabs>
         </div>
       </main>
