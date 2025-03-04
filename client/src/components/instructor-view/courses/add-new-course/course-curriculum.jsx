@@ -8,8 +8,12 @@ import { Label } from "@radix-ui/react-label";
 import { useContext } from "react";
 
 function CourseCurriculum() {
-  const { courseCurriculumFormData, setCourseCurriculumFormData } =
-    useContext(InstructorContext);
+  const {
+    courseCurriculumFormData,
+    setCourseCurriculumFormData,
+    mediaUploadProgress,
+    setMediaUploadProgress,
+  } = useContext(InstructorContext);
 
   function handleNewLacture() {
     setCourseCurriculumFormData([
@@ -27,7 +31,26 @@ function CourseCurriculum() {
       title: event.target.value,
     };
 
-    setCourseCurriculumFormData(copyCourseCurriculumFormData)
+    setCourseCurriculumFormData(copyCourseCurriculumFormData);
+  }
+
+  function handleFreePreviewChange(currentValue, currentIndex) {
+    let copyCourseCurriculumFormData = [...courseCurriculumFormData];
+    copyCourseCurriculumFormData[currentIndex] = {
+      ...copyCourseCurriculumFormData[currentIndex],
+      freePreview: currentValue,
+    };
+
+    setCourseCurriculumFormData(copyCourseCurriculumFormData);
+  }
+
+  function handleSingleLectureUpload(event, currentIndex) {
+    const selectedFile = event.target.files[0];
+
+    if (selectedFile) {
+      const videoFormData = new FormData();
+      videoFormData.append("file", selectedFile);
+    }
   }
 
   console.log(courseCurriculumFormData);
@@ -48,17 +71,28 @@ function CourseCurriculum() {
                   placeholder="Enter lecture title"
                   className="max-w-[20vw]"
                   onChange={(event) => handleCourseTitleChange(event, index)}
-                  value={courseCurriculumFormData[index] ?.title}
+                  value={courseCurriculumFormData[index]?.title}
                 />
                 <div className="flex items-center space-x-2">
-                  <Switch checked={true} id={`freePreview-${index + 1}`} />
+                  <Switch
+                    onCheckedChange={(value) =>
+                      handleFreePreviewChange(value, index)
+                    }
+                    checked={courseCurriculumFormData[index]?.freePreview}
+                    id={`freePreview-${index + 1}`}
+                  />
                   <Label htmlFor={`freePreview-${index + 1}`}>
                     Free Preview
                   </Label>
                 </div>
               </div>
               <div className="mt-6">
-                <Input type="file" accept="video/*" className="mb-4" />
+                <Input
+                  type="file"
+                  accept="video/*"
+                  onChange={(event) => handleSingleLectureUpload(event, index)}
+                  className="mb-4"
+                />
               </div>
             </div>
           ))}
