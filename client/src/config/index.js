@@ -81,7 +81,7 @@ export const courseCategories = [
   { id: "game-development", label: "Game Development" },
   { id: "software-engineering", label: "Software Engineering" },
 ];
-export const courseCreateLandingPageFormControls = [
+export const courseLandingPageFormControls = [
   {
     name: "title",
     label: "Title",
@@ -160,4 +160,15 @@ export const courseLandingInitialFormData = {
   pricing: "",
   objectives: "",
   welcomeMessage: "",
-};
+}; 
+
+
+
+export const courseCurriculumInitialFormdata = [
+  {
+    title: '',
+    videoUrl: '',
+    freePreview: false,
+    public_id : ''
+  }
+]
