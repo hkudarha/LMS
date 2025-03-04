@@ -11,16 +11,26 @@ function CourseCurriculum() {
   const { courseCurriculumFormData, setCourseCurriculumFormData } =
     useContext(InstructorContext);
 
-    function handleNewLacture(){
-        setCourseCurriculumFormData([
-            ...courseCurriculumFormData,
-            {
-                ...courseCurriculumInitialFormdata[0]
-            }
-        ])
+  function handleNewLacture() {
+    setCourseCurriculumFormData([
+      ...courseCurriculumFormData,
+      {
+        ...courseCurriculumInitialFormdata[0],
+      },
+    ]);
+  }
 
-    }
-    console.log(courseCurriculumFormData);
+  function handleCourseTitleChange(event, currentIndex) {
+    let copyCourseCurriculumFormData = [...courseCurriculumFormData];
+    copyCourseCurriculumFormData[currentIndex] = {
+      ...copyCourseCurriculumFormData[currentIndex],
+      title: event.target.value,
+    };
+
+    setCourseCurriculumFormData(copyCourseCurriculumFormData)
+  }
+
+  console.log(courseCurriculumFormData);
   return (
     <Card>
       <CardHeader>
@@ -37,6 +47,8 @@ function CourseCurriculum() {
                   name={`title-${index + 1}`}
                   placeholder="Enter lecture title"
                   className="max-w-[20vw]"
+                  onChange={(event) => handleCourseTitleChange(event, index)}
+                  value={courseCurriculumFormData[index] ?.title}
                 />
                 <div className="flex items-center space-x-2">
                   <Switch checked={true} id={`freePreview-${index + 1}`} />
