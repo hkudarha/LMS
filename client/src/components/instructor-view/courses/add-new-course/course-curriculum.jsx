@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { courseCurriculumInitialFormdata } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
+import { mediaUploadService } from "@/services";
 import { Label } from "@radix-ui/react-label";
 import { useContext } from "react";
 
@@ -44,12 +45,32 @@ function CourseCurriculum() {
     setCourseCurriculumFormData(copyCourseCurriculumFormData);
   }
 
-  function handleSingleLectureUpload(event, currentIndex) {
+  async function handleSingleLectureUpload(event, currentIndex) {
     const selectedFile = event.target.files[0];
 
     if (selectedFile) {
       const videoFormData = new FormData();
       videoFormData.append("file", selectedFile);
+
+      try {
+        setMediaUploadProgress(true);
+        const response = await mediaUploadService(videoFormData);
+
+        if (response.success) {
+          let copyCourseCurriculumFormData = [...courseCurriculumFormData];
+
+          copyCourseCurriculumFormData[currentIndex] = {
+            ...copyCourseCurriculumFormData[currentIndex],
+            videoUrl: response?.data?.url,
+            public_id: response?.data?.public_id,
+          };
+          setCourseCurriculumFormData(copyCourseCurriculumFormData);
+          setMediaUploadProgress(false)
+        }
+        // console.log(response, "response");
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 

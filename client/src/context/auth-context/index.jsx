@@ -17,12 +17,12 @@ export default function AuthProvider({ children }) {
 
   async function handleRegisterUser(event) {
     event.preventDefault();
-    const data = await registerService(signInFormData);
+    const data = await registerService(signUpFormData);
   }
 
   async function handleLoginUser(event) {
     event.preventDefault();
-    const data = await loginService(signUpFormData);
+    const data = await loginService(signInFormData);
 
     if (data.success) {
       sessionStorage.setItem(
@@ -50,13 +50,17 @@ export default function AuthProvider({ children }) {
           authenticate: true,
           user: data.data.user,
         });
+
         setLoading(false);
+
       } else {
         setAuth({
           authenticate: false,
           user: null,
         });
+
         setLoading(false);
+
       }
     } catch (error) {
       console.log(error);
@@ -65,6 +69,7 @@ export default function AuthProvider({ children }) {
           authenticate: false,
           user: null,
         });
+
         setLoading(false);
       }
     }
@@ -81,6 +86,8 @@ export default function AuthProvider({ children }) {
     checkAuthUser();
   }, []);
 
+  console.log(auth);
+  
   return (
     <AuthContext.Provider
       value={{

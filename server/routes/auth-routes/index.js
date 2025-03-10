@@ -3,7 +3,9 @@ const {
   loginUser,
   registerUser,
 } = require("../../controllers/auth-controller/index");
+
 const router = express.Router();
+
 const authenticateMiddleware = require("../../middleware/auth-middleware");
 
 router.post("/register", registerUser);

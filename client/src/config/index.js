@@ -160,15 +160,14 @@ export const courseLandingInitialFormData = {
   pricing: "",
   objectives: "",
   welcomeMessage: "",
-}; 
-
-
+  image: "",
+};
 
 export const courseCurriculumInitialFormdata = [
   {
-    title: '',
-    videoUrl: '',
+    title: "",
+    videoUrl: "",
     freePreview: false,
-    public_id : ''
-  }
-]
+    public_id: "",
+  },
+];

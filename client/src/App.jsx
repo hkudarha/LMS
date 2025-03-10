@@ -41,7 +41,7 @@ function App() {
           path="/instructor/create-new-course"
           element={
             <RouteGuard
-              element={<AddNewCoursePage/>}
+              element={<AddNewCoursePage />}
               authenticated={auth?.authenticate}
               user={auth?.user}
             />
