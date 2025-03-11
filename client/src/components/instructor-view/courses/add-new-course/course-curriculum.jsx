@@ -1,7 +1,9 @@
+import MediaProgressBar from "@/components/media-progress-bar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import VideoPlayer from "@/components/video-player";
 import { courseCurriculumInitialFormdata } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
 import { mediaUploadService } from "@/services";
@@ -14,6 +16,8 @@ function CourseCurriculum() {
     setCourseCurriculumFormData,
     mediaUploadProgress,
     setMediaUploadProgress,
+    meadiaUploadProgressPercentage,
+    setMeadiaUploadProgressPercentage,
   } = useContext(InstructorContext);
 
   function handleNewLacture() {
@@ -54,7 +58,10 @@ function CourseCurriculum() {
 
       try {
         setMediaUploadProgress(true);
-        const response = await mediaUploadService(videoFormData);
+        const response = await mediaUploadService(
+          videoFormData,
+          setMeadiaUploadProgressPercentage
+        );
 
         if (response.success) {
           let copyCourseCurriculumFormData = [...courseCurriculumFormData];
@@ -65,7 +72,7 @@ function CourseCurriculum() {
             public_id: response?.data?.public_id,
           };
           setCourseCurriculumFormData(copyCourseCurriculumFormData);
-          setMediaUploadProgress(false)
+          setMediaUploadProgress(false);
         }
         // console.log(response, "response");
       } catch (error) {
@@ -82,6 +89,12 @@ function CourseCurriculum() {
       </CardHeader>
       <CardContent>
         <Button onClick={handleNewLacture}>Add Lecture</Button>
+        {mediaUploadProgress ? (
+          <MediaProgressBar
+            isMediaUploading={mediaUploadProgress}
+            progress={meadiaUploadProgressPercentage}
+          />
+        ) : null}
         <div className="mt-4 space-y-4">
           {courseCurriculumFormData.map((curriculumItem, index) => (
             <div className="border p-5 rounded-md">
@@ -108,12 +121,26 @@ function CourseCurriculum() {
                 </div>
               </div>
               <div className="mt-6">
-                <Input
-                  type="file"
-                  accept="video/*"
-                  onChange={(event) => handleSingleLectureUpload(event, index)}
-                  className="mb-4"
-                />
+                {courseCurriculumFormData[index]?.videoUrl ? (
+                  <div className="flex gap-3">
+                    <VideoPlayer
+                      url={courseCurriculumFormData[index]?.videoUrl}
+                      width="450px"
+                      height="200px"
+                    />
+                    <Button>Replace Video</Button>
+                    <Button className="bg-red-700">Delete Lecture</Button>
+                  </div>
+                ) : (
+                  <Input
+                    type="file"
+                    accept="video/*"
+                    onChange={(event) =>
+                      handleSingleLectureUpload(event, index)
+                    }
+                    className="mb-4"
+                  />
+                )}
               </div>
             </div>
           ))}

@@ -14,7 +14,7 @@ router.post("/upload", upload.single("file"), async (req, res) => {
     const result = await uploadMediaToCloudinary(req.file.path);
     res.status(200).json({
       success: true,
-      data: result,
+      data: result, 
     });
   } catch (e) {
     res.status(500).json({
