@@ -3,6 +3,8 @@ import { useState } from "react";
 import ReactPlayer from "react-player";
 import { Button } from "../ui/button";
 import {
+  Maximize,
+  Minimize,
   Pause,
   Play,
   RotateCcw,
@@ -28,19 +30,55 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
     setPlaying(!playing);
   }
 
-  function handleProgress() {}
+  function handleProgress(state) {
+    if (!seeking) {
+      setPlayed(state.played);
+    }
+  }
 
-  function handleRewind() {}
+  function handleRewind() {
+    playerRef?.current?.seekTo(playerRef?.current?.getCurrentTime() - 5);
+  }
 
-  function handleForward() {}
+  function handleForward() {
+    playerRef?.current?.seekTo(playerRef?.current?.getCurrentTime() + 5);
+  }
 
-  function handleToggleMute() {}
+  function handleToggleMute() {
+    setMuted(!muted);
+  }
 
-  function handleSeekChange(){}
+  function handleSeekChange(newValue) {
+    setPlayed(newValue[0]);
+    setSeeking(true);
+  }
 
-  function handleSeekMouseUp(){}
+  function handleSeekMouseUp() {
+    setSeeking(false);
+    playerRef.current?.seekTo(played);
+  }
 
-  
+  function handleVolumeChange(newValue) {
+    setVolume(newValue[0]);
+  }
+
+  function pad(string) {
+    return ("0" + string).slice(-2);
+  }
+
+  function formateTime(seconds) {
+    const date = new Date(seconds * 1000);
+    const hr = date.getUTCHours();
+    const mm = date.getUTCMinutes();
+    const ss = date.getUTCSeconds();
+
+    if (hr) {
+      return `${hr}:${pad(mm)}:${ss}`;
+    }
+
+    return `${mm}:${ss}`;
+  }
+
   return (
     <div
       ref={playerContainerRef}
@@ -70,7 +108,7 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
             value={[played * 100]}
             max={100}
             step={0.1}
-            onValueChange={(value) => handleSeekChange([value[0]/100])}
+            onValueChange={(value) => handleSeekChange([value[0] / 100])}
             onValueCommit={handleSeekMouseUp}
             className="w-full mb-4"
           />
@@ -81,7 +119,7 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
                 variant="ghost"
                 size="icon "
                 onClick={handlePlayAndPause}
-                className="text-white hover:text-primary hover:bg-gray-700"
+                className="text-white hover:text-white  bg-transparent hover:bg-gray-700"
               >
                 {playing ? (
                   <Pause className="h-6 w-6" />
@@ -89,35 +127,58 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
                   <Play className="h-6 w-6" />
                 )}
               </Button>
-
               <Button
                 variant="ghost"
                 size="icon "
                 onClick={handleRewind}
-                className="text-white hover:text-primary hover:bg-gray-700"
+                className="text-white hover:text-white bg-transparent hover:bg-gray-700"
               >
                 <RotateCcw className="h-6 w-6" />
               </Button>
-
               <Button
                 variant="ghost"
                 size="icon "
                 onClick={handleForward}
-                className="text-white hover:text-primary hover:bg-gray-700"
+                className="text-white hover:text-white bg-transparent hover:bg-gray-700"
               >
                 <RotateCw className="h-6 w-6" />
               </Button>
-
               <Button
                 variant="ghost"
                 size="icon "
                 onClick={handleToggleMute}
-                className="text-white hover:text-primary hover:bg-gray-700"
+                className="text-white hover:text-white bg-transparent hover:bg-gray-700"
               >
                 {muted ? (
                   <VolumeX className="h-6 w-6" />
                 ) : (
                   <Volume2 className="h-6 w-6" />
+                )}
+              </Button>
+              <Slider
+                value={[volume * 100]}
+                max={100}
+                step={1}
+                onValueChange={(value) => handleVolumeChange([value[0] / 100])}
+                className="w-24 "
+              />
+              15/50
+            </div>
+            <div className="flex items-center space-x-2">
+              <div className="text-white ">
+                {formateTime(played * (playerRef?.current?.getDuration() || 0))}
+                /{formateTime(playerRef?.current?.getDuration() || 0)}
+              </div>
+              <Button
+                size="icon "
+                variant="ghost"
+                className="text-white hover:text-white bg-transparent hover:bg-gray-700"
+                onClick={handleFullScreen}
+              >
+                {isFullScreen ? (
+                  <Minimize className="h-6 w-6" />
+                ) : (
+                  <Maximize className="h-6 w-6" />
                 )}
               </Button>
             </div>
