@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import VideoPlayer from "@/components/video-player";
 import { courseCurriculumInitialFormdata } from "@/config";
 import { InstructorContext } from "@/context/instructor-context";
-import { mediaUploadService } from "@/services";
+import { mediaDeleteService, mediaUploadService } from "@/services";
 import { Label } from "@radix-ui/react-label";
 import { useContext } from "react";
 
@@ -81,14 +81,49 @@ function CourseCurriculum() {
     }
   }
 
+  async function handleReplaceVideo(currentIndex) {
+    let copyCourseCurriculumFormData = [...courseCurriculumFormData];
+    const getCurrentVideoPublicId =
+      copyCourseCurriculumFormData[currentIndex].public_id;
+
+    const deleteCurrentMediaResponse = await mediaDeleteService(
+      getCurrentVideoPublicId
+    );
+
+    if (deleteCurrentMediaResponse?.success) {
+      copyCourseCurriculumFormData[currentIndex] = {
+        ...copyCourseCurriculumFormData[currentIndex],
+        videoUrl: "",
+        public_id: "",
+      };
+    }
+  }
+
+  function isCourseCurriculumFormDataValid() {
+    return courseCurriculumFormData.every((item) => {
+      return (
+        item &&
+        typeof item === "object" &&
+        item.title.trim() !== "" &&
+        item.videoUrl.trim() !== ""
+      );
+    });
+  }
+
   console.log(courseCurriculumFormData);
+  
   return (
     <Card>
       <CardHeader>
         <CardTitle>Course Curriculum</CardTitle>
       </CardHeader>
       <CardContent>
-        <Button onClick={handleNewLacture}>Add Lecture</Button>
+        <Button
+          disabled={!isCourseCurriculumFormDataValid() || mediaUploadProgress}
+          onClick={handleNewLacture}
+        >
+          Add Lecture
+        </Button>
         {mediaUploadProgress ? (
           <MediaProgressBar
             isMediaUploading={mediaUploadProgress}
@@ -128,7 +163,9 @@ function CourseCurriculum() {
                       width="450px"
                       height="200px"
                     />
-                    <Button>Replace Video</Button>
+                    <Button onClick={() => handleReplaceVideo(index)}>
+                      Replace Video
+                    </Button>
                     <Button className="bg-red-700">Delete Lecture</Button>
                   </div>
                 ) : (

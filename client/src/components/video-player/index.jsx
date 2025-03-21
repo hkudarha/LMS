@@ -1,5 +1,5 @@
 import { Slider } from "@radix-ui/react-slider";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactPlayer from "react-player";
 import { Button } from "../ui/button";
 import {
@@ -70,7 +70,7 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
     const date = new Date(seconds * 1000);
     const hr = date.getUTCHours();
     const mm = date.getUTCMinutes();
-    const ss = date.getUTCSeconds();
+    const ss = pad(date.getUTCSeconds());
 
     if (hr) {
       return `${hr}:${pad(mm)}:${ss}`;
@@ -79,12 +79,44 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
     return `${mm}:${ss}`;
   }
 
+  const handleFullScreen = useCallback(() => {
+    if (!isFullScreen) {
+      if (playerContainerRef?.current.requestFullscreen) {
+        playerContainerRef?.current?.requestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }, [isFullScreen]);
+
+  function handleMouseMove() {
+    setShowControls(true);
+    clearTimeout(controlsTimeoutRef.current);
+    controlsTimeoutRef.current = setTimeout(() => setShowControls(false), 3000);
+  }
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+    };
+  }, []);
+
   return (
     <div
       ref={playerContainerRef}
       className={`relative bg-gray-800 rounded-lg overflow-hidden shadow-2xl transition-all duration-300 ease-in-out
-    ${isFullScreen ? "w-screen h-screen" : ""}`}
+      ${isFullScreen ? "w-screen h-screen" : ""}`}
       style={{ width, height }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => setShowControls(false)}
     >
       <ReactPlayer
         ref={playerRef}
@@ -162,8 +194,8 @@ function VideoPlayer({ width = "100%", height = "100%", url }) {
                 onValueChange={(value) => handleVolumeChange([value[0] / 100])}
                 className="w-24 "
               />
-              15/50
             </div>
+
             <div className="flex items-center space-x-2">
               <div className="text-white ">
                 {formateTime(played * (playerRef?.current?.getDuration() || 0))}
