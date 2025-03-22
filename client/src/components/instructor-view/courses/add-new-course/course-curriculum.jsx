@@ -96,6 +96,8 @@ function CourseCurriculum() {
         videoUrl: "",
         public_id: "",
       };
+
+      setCourseCurriculumFormData(copyCourseCurriculumFormData);
     }
   }
 
@@ -111,7 +113,7 @@ function CourseCurriculum() {
   }
 
   console.log(courseCurriculumFormData);
-  
+
   return (
     <Card>
       <CardHeader>
