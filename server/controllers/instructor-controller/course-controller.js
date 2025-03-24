@@ -24,6 +24,12 @@ const addNewCourse = async (requestAnimationFrame, res) => {
 
 const getAllcourses = async (requestAnimationFrame, res) => {
   try {
+    const coursesList = await Course.find({});
+
+    res.status(200).json({
+      success: true,
+      data: coursesList,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -33,8 +39,22 @@ const getAllcourses = async (requestAnimationFrame, res) => {
   }
 };
 
-const getCourseDetails = async (requestAnimationFrame, res) => {
+const getCourseDetailsByID = async (requestAnimationFrame, res) => {
   try {
+    const { id } = req.params;
+    const courseDetails = await Course.findById(id);
+
+    if (!courseDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: courseDetails,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -46,6 +66,27 @@ const getCourseDetails = async (requestAnimationFrame, res) => {
 
 const updateCourseByID = async (requestAnimationFrame, res) => {
   try {
+    const { id } = req.params;
+    const updatedCourseData = req.body;
+
+    const updatedCourse = await Course.findByIdAndUpdate(
+      id,
+      updatedCourseData,
+      { new: true }
+    );
+
+    if (!updatedCourse) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found!",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Course updated successfully",
+      data: updatedCourse,
+    });
   } catch (e) {
     console.log(e);
     res.status(500).json({
@@ -58,6 +99,6 @@ const updateCourseByID = async (requestAnimationFrame, res) => {
 module.exports = {
   addNewCourse,
   getAllcourses,
-  getCourseDetails,
+  getCourseDetailsByID,
   updateCourseByID,
 };
