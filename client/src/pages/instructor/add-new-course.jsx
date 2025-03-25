@@ -4,12 +4,16 @@ import CourseSettings from "@/components/instructor-view/courses/add-new-course/
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TabsContent, TabsTrigger } from "@/components/ui/tabs";
-import { courseCurriculumInitialFormdata, courseLandingInitialFormData } from "@/config";
+import {
+  courseCurriculumInitialFormdata,
+  courseLandingInitialFormData,
+} from "@/config";
 import { AuthContext } from "@/context/auth-context";
 import { InstructorContext } from "@/context/instructor-context";
 import { addNewCourseService } from "@/services";
 import { Tabs, TabsList } from "@radix-ui/react-tabs";
 import { useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function AddNewCoursePage() {
   const {
@@ -17,9 +21,16 @@ function AddNewCoursePage() {
     courseCurriculumFormData,
     setCourseLandingFormdata,
     setCourseCurriculumFormData,
+    currentEditedCourseId,
+    setCurrentEditedCourseId,
   } = useContext(InstructorContext);
 
   const { auth } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+  const params = useParams();
+
+  console.log(params);
 
   function isEmpty(value) {
     if (Array.isArray(value)) {
@@ -66,8 +77,9 @@ function AddNewCoursePage() {
     const response = await addNewCourseService(courseFinalFormData);
 
     if (response?.success) {
-      setCourseLandingFormdata(courseLandingInitialFormData)
-      setCourseCurriculumFormData(courseCurriculumInitialFormdata)
+      setCourseLandingFormdata(courseLandingInitialFormData);
+      setCourseCurriculumFormData(courseCurriculumInitialFormdata);
+      navigate(-1);
     }
 
     console.log(courseFinalFormData, "courseFinalFormData");

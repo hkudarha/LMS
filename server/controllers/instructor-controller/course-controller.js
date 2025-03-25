@@ -1,6 +1,6 @@
 const Course = require("../../models/Course");
 
-const addNewCourse = async (requestAnimationFrame, res) => {
+const addNewCourse = async (req, res) => {
   try {
     const courseData = req.body;
     const newlyCreatedCourse = new Course(courseData);
@@ -22,7 +22,7 @@ const addNewCourse = async (requestAnimationFrame, res) => {
   }
 };
 
-const getAllcourses = async (requestAnimationFrame, res) => {
+const getAllcourses = async (req, res) => {
   try {
     const coursesList = await Course.find({});
 
@@ -39,7 +39,7 @@ const getAllcourses = async (requestAnimationFrame, res) => {
   }
 };
 
-const getCourseDetailsByID = async (requestAnimationFrame, res) => {
+const getCourseDetailsByID = async (req, res) => {
   try {
     const { id } = req.params;
     const courseDetails = await Course.findById(id);
@@ -64,7 +64,7 @@ const getCourseDetailsByID = async (requestAnimationFrame, res) => {
   }
 };
 
-const updateCourseByID = async (requestAnimationFrame, res) => {
+const updateCourseByID = async (req, res) => {
   try {
     const { id } = req.params;
     const updatedCourseData = req.body;
