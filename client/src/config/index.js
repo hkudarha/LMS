@@ -171,3 +171,18 @@ export const courseCurriculumInitialFormdata = [
     public_id: "",
   },
 ];
+
+async function handleRegisterUser(event) {
+  event.preventDefault();
+  console.log("signUpFormData:", signUpFormData); // Debugging
+  try {
+    await registerService(signUpFormData); // Call your API service
+    alert("Registration successful!");
+  } catch (error) {
+    if (error.response && error.response.status === 400) {
+      alert(error.response.data.message); // Show the error message from the backend
+    } else {
+      console.error("An unexpected error occurred:", error);
+    }
+  }
+}

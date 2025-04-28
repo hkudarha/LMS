@@ -39,13 +39,7 @@ function InstructorDashboardPage() {
       icon: Book,
       label: "Cources",
       value: "cources",
-      Component: <InstructorCourses  listOfCourses ={instructorCoursesList}/>,
-    },
-    {
-      icon: LogOut,
-      label: "Logout",
-      value: "logout",
-      Component: null,
+      Component: <InstructorCourses listOfCourses={instructorCoursesList} />,
     },
   ];
 
@@ -56,7 +50,7 @@ function InstructorDashboardPage() {
 
   return (
     <div className="flex h-full min-h-screen bg-gray-100">
-      <aside className="w-64 bg-white shadow-md hidden md:block">
+      <aside className="w-64 bg-white shadow-md hidden md:block relative">
         <div className="p-4">
           <h2 className="text-2xl font-bold mb-4">Instructor view</h2>
           <nav>
@@ -65,11 +59,7 @@ function InstructorDashboardPage() {
                 className="w-full justify-start mb-2"
                 key={menuItem.value}
                 variant={activeTab === menuItem.value ? "secondary" : "ghost"}
-                onClick={
-                  menuItem.value === "logout"
-                    ? handleLogout
-                    : () => setActiveTab(menuItem.value)
-                }
+                onClick={() => setActiveTab(menuItem.value)}
               >
                 <menuItem.icon className="mr-2 h-4 w-4" />
                 {menuItem.label}
@@ -77,15 +67,26 @@ function InstructorDashboardPage() {
             ))}
           </nav>
         </div>
+        
+        {/* Logout button positioned at the bottom */}
+        <div className="absolute bottom-4 left-0 right-0 px-4">
+          <Button
+            className="w-full justify-start bg-red-500 hover:bg-red-600 text-white"
+            onClick={handleLogout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
+        </div>
       </aside>
 
-      <main className="flex-1 p-8 overflow-y-auto ">
+      <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Dashboard</h1>
+          {/* <h1 className="text-3xl font-bold mb-8">Dashboard</h1> */}
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             {menuItem.map((menuItem) => (
-              <TabsContent value={menuItem.value}>
-                {menuItem.Component !== null ? menuItem.Component : null}
+              <TabsContent value={menuItem.value} key={menuItem.value}>
+                {menuItem.Component}
               </TabsContent>
             ))}
           </Tabs>

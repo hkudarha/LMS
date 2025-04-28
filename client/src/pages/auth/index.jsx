@@ -12,18 +12,49 @@ import { AuthContext } from "@/context/auth-context";
 import { GraduationCap } from "lucide-react";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
+export async function registerService(userData) {
+  const response = await axios.post("http://localhost:5000/api/register", userData);
+  return response.data;
+}
 
 function AuthPage() {
   const [activeTab, setActiveTab] = useState("signin");
+  const [signUpFormData, setSignUpFormData] = useState({
+    userName: "",
+    userEmail: "",
+    password: "",
+  });
 
   const {
     signInFormData,
     setSignInFormData,
-    signUpFormData,
-    setSignUpFormData,
-    handleRegisterUser,
     handleLoginUser
   } = useContext(AuthContext);
+
+  async function handleRegisterUser(event) {
+    event.preventDefault();
+    console.log("signUpFormData:", signUpFormData); // Debugging
+    try {
+      await registerService(signUpFormData); // Call your API service
+      alert("Registration successful!");
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        alert(error.response.data.message); // Show the error message from the backend
+      } else {
+        console.error("An unexpected error occurred:", error);
+      }
+    }
+  }
+
+  function handleInputChange(event) {
+    const { name, value } = event.target;
+    setSignUpFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  }
 
   function handleTabChange(value) {
     setActiveTab(value);
@@ -92,7 +123,7 @@ function AuthPage() {
           <TabsContent value="signup">
             <Card className="p-6 space-y-4">
               <CardHeader>
-                <CardTitle>Ctreate a new Account </CardTitle>
+                <CardTitle>Create a new Account </CardTitle>
                 <CardDescription>
                   Enter your details to get started
                 </CardDescription>
@@ -101,10 +132,8 @@ function AuthPage() {
               <CardContent className="space-y-2">
                 <CommonForm
                   formControls={signUpFormControls}
-                  buttonText={"Sign Up"}
                   formData={signUpFormData}
-                  setFormData={setSignUpFormData  }
-                  isButtonDisabled={!checkIfSignUnFormIsValid()}
+                  setFormData={setSignUpFormData}
                   handleSubmit={handleRegisterUser}
                 />
               </CardContent>
@@ -117,3 +146,32 @@ function AuthPage() {
 }
 
 export default AuthPage;
+
+// const express = require('express');
+// const app = express();
+// const bodyParser = require('body-parser');
+
+// app.use(bodyParser.json());
+
+// // Default route for the root path
+// app.get('/', (req, res) => {
+//   res.send('Welcome to the API');
+// });
+
+// app.post('/api/register', (req, res) => {
+//   const { userName, userEmail, password } = req.body;
+
+//   // Example logic to check if the user already exists
+//   const userExists = false; // Replace with actual database check
+//   if (userExists) {
+//     return res.status(400).json({ success: false, message: 'User name or user email already exists' });
+//   }
+
+//   // Save the user to the database (mock example)
+//   res.status(200).json({ success: true, message: 'User registered successfully' });
+// });
+
+// const PORT = 5000;
+// app.listen(PORT, () => {
+//   console.log(`Server is running on http://localhost:${PORT}`);
+// });
